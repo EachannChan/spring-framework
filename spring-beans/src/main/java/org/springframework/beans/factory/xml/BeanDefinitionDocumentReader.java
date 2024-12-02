@@ -34,6 +34,7 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
  * @since 18.12.2003
  * @see XmlBeanDefinitionReader#setDocumentReaderClass
  */
+// 有且只有一个默认实现类 DefaultBeanDefinitionDocumentReader
 public interface BeanDefinitionDocumentReader {
 
 	/**
