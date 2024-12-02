@@ -51,6 +51,22 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.core.io.ResourceLoader
  * @see org.springframework.context.ApplicationContext
  */
+
+/**
+ * EntityResolver 的作用就是，通过实现它，应用可以自定义如何寻找【验证文件】的逻辑。
+ *
+ * 在 loadDocument 方法中涉及一个参数 EntityResolver ，何为EntityResolver？
+ * 官网这样解释：如果 SAX 应用程序需要实现自定义处理外部实体，则必须实现此接口并使用
+ * setEntityResolver 方法向SAX 驱动器注册一个实例。也就是说，对于解析一个XML，SAX
+ * 首先读取该 XML 文档上的声明，根据声明去寻找相应的 DTD 定义，以便对文档进行一个验证。
+ * 默认的寻找规则，即通过网络（实现上就是声明的DTD的URI地址）来下载相应的DTD声明，并进行认证。
+ * 下载的过程是一个漫长的过程，而且当网络中断或不可用时，这里会报错，就是因为相应的DTD声明没有被找到的原因。
+ *
+ * EntityResolver 的作用是项目本身就可以提供一个如何寻找 DTD 声明的方法，
+ * 即由程序来实现寻找 DTD 声明的过程，比如我们将 DTD 文件放到项目中某处，
+ * 在实现时直接将此文档读取并返回给 SAX 即可。这样就避免了通过网络来寻找相应的声明。
+ *
+ */
 public class ResourceEntityResolver extends DelegatingEntityResolver {
 
 	private static final Log logger = LogFactory.getLog(ResourceEntityResolver.class);
@@ -74,14 +90,16 @@ public class ResourceEntityResolver extends DelegatingEntityResolver {
 	@Nullable
 	public InputSource resolveEntity(@Nullable String publicId, @Nullable String systemId)
 			throws SAXException, IOException {
-
+		// 调用父类的方法，进行解析
 		InputSource source = super.resolveEntity(publicId, systemId);
 
 		if (source == null && systemId != null) {
+			// 获得 resourcePath ，即 Resource 资源地址
 			String resourcePath = null;
 			try {
 				String decodedSystemId = URLDecoder.decode(systemId, "UTF-8");
 				String givenUrl = new URL(decodedSystemId).toString();
+				// 解析文件资源的相对路径（相对于系统根路径）
 				String systemRootUrl = new File("").toURI().toURL().toString();
 				// Try relative to resource base if currently in system root.
 				if (givenUrl.startsWith(systemRootUrl)) {
@@ -101,6 +119,7 @@ public class ResourceEntityResolver extends DelegatingEntityResolver {
 					logger.trace("Trying to locate XML entity [" + systemId + "] as resource [" + resourcePath + "]");
 				}
 				Resource resource = this.resourceLoader.getResource(resourcePath);
+				// 创建 InputSource 对象
 				source = new InputSource(resource.getInputStream());
 				source.setPublicId(publicId);
 				source.setSystemId(systemId);
@@ -108,6 +127,7 @@ public class ResourceEntityResolver extends DelegatingEntityResolver {
 					logger.debug("Found XML entity [" + systemId + "]: " + resource);
 				}
 			}
+			//通过网络的方式获取source
 			else if (systemId.endsWith(DTD_SUFFIX) || systemId.endsWith(XSD_SUFFIX)) {
 				// External dtd/xsd lookup via https even for canonical http declaration
 				String url = systemId;
@@ -115,6 +135,7 @@ public class ResourceEntityResolver extends DelegatingEntityResolver {
 					url = "https:" + url.substring(5);
 				}
 				try {
+					//通过网络的方式获取source
 					source = new InputSource(new URL(url).openStream());
 					source.setPublicId(publicId);
 					source.setSystemId(systemId);

@@ -84,7 +84,8 @@ public class BeansDtdResolver implements EntityResolver {
 				}
 			}
 		}
-
+		// 使用默认行为，从网络上下载
+		// Use the default behavior -> download from website or wherever.
 		// Fall back to the parser's default behavior.
 		return null;
 	}
