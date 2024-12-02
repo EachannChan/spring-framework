@@ -184,6 +184,7 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 
 	private static final Log logger = LogFactory.getLog(PathMatchingResourcePatternResolver.class);
 
+	// the method to resolve match pattern
 	@Nullable
 	private static Method equinoxResolveMethod;
 
@@ -281,6 +282,7 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 			// a class path resource (multiple resources for same name possible)
 			if (getPathMatcher().isPattern(locationPattern.substring(CLASSPATH_ALL_URL_PREFIX.length()))) {
 				// a class path resource pattern
+				//有通配符的在此执行
 				return findPathMatchingResources(locationPattern);
 			}
 			else {
@@ -315,6 +317,7 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 	 */
 	protected Resource[] findAllClassPathResources(String location) throws IOException {
 		String path = location;
+		//去除 /
 		if (path.startsWith("/")) {
 			path = path.substring(1);
 		}
@@ -335,9 +338,11 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 	protected Set<Resource> doFindAllClassPathResources(String path) throws IOException {
 		Set<Resource> result = new LinkedHashSet<>(16);
 		ClassLoader cl = getClassLoader();
+		//cl为空则使用系统类加载器
 		Enumeration<URL> resourceUrls = (cl != null ? cl.getResources(path) : ClassLoader.getSystemResources(path));
 		while (resourceUrls.hasMoreElements()) {
 			URL url = resourceUrls.nextElement();
+			// 将 URL 转换成 UrlResource
 			result.add(convertClassLoaderURL(url));
 		}
 		if ("".equals(path)) {
@@ -494,6 +499,7 @@ public class PathMatchingResourcePatternResolver implements ResourcePatternResol
 	protected Resource[] findPathMatchingResources(String locationPattern) throws IOException {
 		String rootDirPath = determineRootDir(locationPattern);
 		String subPattern = locationPattern.substring(rootDirPath.length());
+		//获取根据路径下的资源
 		Resource[] rootDirResources = getResources(rootDirPath);
 		Set<Resource> result = new LinkedHashSet<>(16);
 		for (Resource rootDirResource : rootDirResources) {
