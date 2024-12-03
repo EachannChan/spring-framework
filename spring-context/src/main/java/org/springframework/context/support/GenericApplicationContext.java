@@ -93,6 +93,9 @@ import org.springframework.util.Assert;
  */
 public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {
 
+	/**
+	 * DefaultListableBeanFactory为其属性
+	 */
 	private final DefaultListableBeanFactory beanFactory;
 
 	@Nullable
