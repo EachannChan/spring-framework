@@ -30,6 +30,15 @@ import org.springframework.lang.Nullable;
  * {@link BeanFactoryPostProcessor} such as {@link PropertyPlaceholderConfigurer}
  * to introspect and modify property values and other bean metadata.
  *
+ * BeanDefinition 继承 AttributeAccessor 和 BeanMetadataElement 接口
+ * 我们常用的三个实现类有：
+ * 	org.springframework.beans.factory.support.ChildBeanDefinition
+ * 	org.springframework.beans.factory.support.RootBeanDefinition
+ * 	org.springframework.beans.factory.support.GenericBeanDefinition
+ * 	ChildBeanDefinition、RootBeanDefinition、GenericBeanDefinition 三者都继承 AbstractBeanDefinition 抽象类，即 AbstractBeanDefinition 对三个子类的共同的类信息进行抽象。
+ * 	如果配置文件中定义了父 <bean> 和 子 <bean> ，则父 <bean> 用 RootBeanDefinition 表示，子 <bean> 用 ChildBeanDefinition 表示，而没有父 <bean> 的就使用RootBeanDefinition 表示。
+ * 	GenericBeanDefinition 为一站式服务类
+ *
  * @author Juergen Hoeller
  * @author Rob Harrop
  * @since 19.03.2004
