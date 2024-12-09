@@ -300,7 +300,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 			try {
 				// <6> 从容器中获取 beanName 相应的 GenericBeanDefinition 对象，并将其转换为 RootBeanDefinition 对象
-				//因为从 XML 配置文件中读取到的 Bean 信息是存储在GenericBeanDefinition 中的。
+				// 因为从 XML 配置文件中读取到的 Bean 信息是存储在GenericBeanDefinition 中的。
 				// 但是，所有的 Bean 后续处理都是针对于 RootBeanDefinition 的，所以这里需要进行一个转换。
 				//
 				//转换的同时，如果父类 bean 不为空的话，则会一并合并父类的属性。

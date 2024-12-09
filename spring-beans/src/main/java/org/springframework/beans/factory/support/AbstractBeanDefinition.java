@@ -147,6 +147,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	private boolean lazyInit = false;
 
+	/**
+	 * 注入模式
+	 */
 	private int autowireMode = AUTOWIRE_NO;
 
 	private int dependencyCheck = DEPENDENCY_CHECK_NONE;
@@ -560,7 +563,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * @see #AUTOWIRE_BY_TYPE
 	 */
 	public int getResolvedAutowireMode() {
-		if (this.autowireMode == AUTOWIRE_AUTODETECT) {
+		if (this.autowireMode == AUTOWIRE_AUTODETECT) { // 自动检测模式，获得对应的检测模式
 			// Work out whether to apply setter autowiring or constructor autowiring.
 			// If it has a no-arg constructor it's deemed to be setter autowiring,
 			// otherwise we'll try constructor autowiring.
@@ -715,6 +718,11 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	/**
 	 * Return a callback for creating an instance of the bean, if any.
+	 * 创建 Bean 的 Supplier 对象，其子类在构造 BeanDefinition 对象的时候，设置了 instanceSupplier 该值
+	 *
+	 * Supplier 接口仅有一个功能性的 #get() 方法，该方法会返回一个 <T> 类型的对象，有点儿类似工厂方法。
+	 * 这个接口有什么作用？用于指定创建 bean 的回调。如果我们设置了这样的回调，那么其他的构造器或者工厂方法都会没有用。
+	 *
 	 * @since 5.0
 	 */
 	@Nullable
@@ -1083,7 +1091,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 */
 	public void prepareMethodOverrides() throws BeanDefinitionValidationException {
 		// Check that lookup methods exist and determine their overloaded status.
-		if (hasMethodOverrides()) {
+		if (hasMethodOverrides()) { // 同步
+			// 循环，执行 prepareMethodOverride
 			getMethodOverrides().getOverrides().forEach(this::prepareMethodOverride);
 		}
 	}
@@ -1092,6 +1101,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * Validate and prepare the given method override.
 	 * Checks for existence of a method with the specified name,
 	 * marking it as not overloaded if none found.
+	 * 根据方法名称，从 class 中获取该方法名的个数：
+	 * 如果个数为 0 ，则抛出 BeanDefinitionValidationException 异常。
+	 * 如果个数为 1 ，则设置该重载方法没有被重载。
 	 * @param mo the MethodOverride object to validate
 	 * @throws BeanDefinitionValidationException in case of validation failure
 	 */
