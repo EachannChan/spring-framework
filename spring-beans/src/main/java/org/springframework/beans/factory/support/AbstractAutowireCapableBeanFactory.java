@@ -1973,6 +1973,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	/**
+	 * Spring 容器会主动检查当前 bean 是否已经实现了 InitializingBean 接口，
+	 * 如果实现了，则会掉用其 #afterPropertiesSet() 方法。
+	 * 这个主动检查、调用的动作是由 #invokeInitMethods(String beanName,
+	 * final Object bean, @Nullable RootBeanDefinition mbd) 方法来完成的
+	 *
 	 * Give a bean a chance to react now all its properties are set,
 	 * and a chance to know about its owning bean factory (this object).
 	 * This means checking whether the bean implements InitializingBean or defines
@@ -2010,6 +2015,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (mbd != null && bean.getClass() != NullBean.class) {
+			// 判断是否指定了 init-method()，
+			// 如果指定了 init-method()，则再调用制定的init-method
 			String initMethodName = mbd.getInitMethodName();
 			if (StringUtils.hasLength(initMethodName) &&
 					!(isInitializingBean && "afterPropertiesSet".equals(initMethodName)) &&
