@@ -540,7 +540,6 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			throw new BeanCreationException(mbdToUse.getResourceDescription(), beanName,
 					"BeanPostProcessor before instantiation of bean failed", ex);
 		}
-
 		try {
 			// <4> 创建 Bean 对象
 			Object beanInstance = doCreateBean(beanName, mbdToUse, args);
