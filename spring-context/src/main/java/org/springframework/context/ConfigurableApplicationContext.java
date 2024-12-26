@@ -148,6 +148,8 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	void addProtocolResolver(ProtocolResolver resolver);
 
 	/**
+	 // 加载或者刷新配置
+	 // 这是一个非常重要的方法
 	 * Load or refresh the persistent representation of the configuration, which
 	 * might be from Java-based configuration, an XML file, a properties file, a
 	 * relational database schema, or some other format.
