@@ -19,6 +19,16 @@ package org.springframework.beans;
 import java.beans.PropertyDescriptor;
 
 /**
+ * Spring 的 低级 JavaBean 基础结构的接口，一般不会直接使用，
+ * 而是通过 BeanFactory 或者 DataBinder 隐式使用。
+ * 它提供分析和操作标准 JavaBeans 的操作：
+ * 获取和设置属性值、获取属性描述符以及查询属性的可读性/可写性的能力。
+ *
+ * 它具有三重身份：
+ * 属性编辑器
+ * 属性编辑器注册表
+ * 类型转换器
+ *
  * The central interface of Spring's low-level JavaBeans infrastructure.
  *
  * <p>Typically not used directly but rather implicitly via a
